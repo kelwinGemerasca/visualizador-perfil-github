@@ -1,4 +1,4 @@
-import { fetchUserProfile } from './api.js';
+import { fetchGithubUserRepos, fetchUserProfile } from './api.js';
 import { showLoading, renderProfile, showError, clearResults } from './ui.js';
 
 const inputSearch = document.getElementById('input-search');
@@ -16,7 +16,10 @@ const handleSearch = async () => {
 
     try {
         const userData = await fetchUserProfile(userName);
-        renderProfile(userData);
+        const userRepos = await fetchGithubUserRepos(userName);
+        console.log(userRepos);
+        renderProfile(userData, userRepos);
+
     } catch (error) {
         console.error('Erro ao buscar perfil do usuário:', error);
         showError('Usuário não encontrado. Por favor, verifique o nome do usuário e tente novamente.');
