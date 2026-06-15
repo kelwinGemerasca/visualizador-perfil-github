@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
+  color-scheme: light;
   --radius: 0.5rem;
   --border: hsl(214.3, 31.8%, 91.4%);
   --ring: hsl(262, 100%, 76%);
@@ -9,6 +10,10 @@
   --muted: hsl(210, 40%, 96.1%);
   --muted-foreground: hsl(215.4, 16.3%, 46.9%);
   --card: hsl(0, 0%, 100%);
+  --card-overlay: rgba(255, 255, 255, 0.98);
+  --body-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #fda085 100%);
+  --input-border: #989797;
+  --stats-background: #ececec;
   --primary: hsl(222.2, 47.4%, 11.2%);
   --primary-foreground: hsl(210, 40%, 98%);
   
@@ -34,8 +39,28 @@
   --transition: all 0.2s;
 }
 
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --border: hsla(217, 33%, 24%, 0.9);
+  --ring: hsl(263, 92%, 76%);
+  --background: hsl(222, 47%, 8%);
+  --foreground: hsl(210, 40%, 96%);
+  --muted: hsl(222, 35%, 13%);
+  --muted-foreground: hsl(215, 20%, 72%);
+  --card: hsl(224, 38%, 12%);
+  --card-overlay: rgba(15, 23, 42, 0.88);
+  --body-gradient: linear-gradient(135deg, #020617 0%, #172554 32%, #581c87 68%, #111827 100%);
+  --input-border: hsl(217, 33%, 28%);
+  --stats-background: rgba(148, 163, 184, 0.12);
+  --primary: hsl(263, 92%, 76%);
+  --primary-foreground: hsl(222, 47%, 8%);
+  --shadow-sm: 0 8px 20px -10px rgba(0, 0, 0, 0.65);
+  --shadow-md: 0 16px 30px -16px rgba(0, 0, 0, 0.75);
+  --shadow-lg: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+}
+
 body {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #fda085 100%);
+  background: var(--body-gradient);
   background-size: 400% 400%;
   font-family: "Inter", "Segoe UI", sans-serif;  
   text-align: center;    
@@ -52,6 +77,85 @@ main {
   padding: var(--spacing-2xl) var(--spacing-md);      
 }
 
+.theme-toggle {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.85rem;
+  margin: 0 0 var(--spacing-xl);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  line-height: 1;
+  backdrop-filter: blur(12px);
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 3px;
+}
+
+.theme-toggle__label {
+  opacity: 0.62;
+  transition: var(--transition);
+}
+
+.theme-toggle__label--light {
+  opacity: 1;
+}
+
+html[data-theme="dark"] .theme-toggle__label--light {
+  opacity: 0.62;
+}
+
+html[data-theme="dark"] .theme-toggle__label--dark {
+  opacity: 1;
+}
+
+.theme-toggle__icon {
+  position: relative;
+  width: 2.25rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.32);
+  transition: var(--transition);
+}
+
+.theme-toggle__icon::after {
+  content: "";
+  position: absolute;
+  top: 0.18rem;
+  left: 0.2rem;
+  width: 0.84rem;
+  height: 0.84rem;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.35);
+  transition: var(--transition);
+}
+
+html[data-theme="dark"] .theme-toggle__icon {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+html[data-theme="dark"] .theme-toggle__icon::after {
+  transform: translateX(1rem);
+  background: hsl(263, 92%, 86%);
+}
+
 .devicon-github-original{
   font-size: var(--font-3xl);
   margin-bottom: var(--spacing-xl);
@@ -66,7 +170,7 @@ main {
 .container {
   width: 90%;
   max-width: 64rem;
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--card-overlay);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -75,6 +179,7 @@ main {
   margin: 0 auto;
   border: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(18px);
 }
 
 .container header {
@@ -99,7 +204,7 @@ main {
   padding: 0.625rem var(--font-sm);
   margin: var(--spacing-sm) 0 var(--spacing-md);
   border-radius: calc(var(--radius) - 2px);
-  border: 1px solid #989797;
+  border: 1px solid var(--input-border);
   background: var(--background);
   color: var(--foreground);
   font-family: inherit;
@@ -108,16 +213,45 @@ main {
 
 .container header #input-search:focus {
   border-color: var(--ring);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 24%, transparent);
 }
 
 .container header #input-search::placeholder {
   color: var(--muted-foreground);
 }
 
+.sort-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  margin: 0 auto var(--spacing-xl);
+  color: var(--muted-foreground);
+  font-size: var(--font-sm);
+  font-weight: 500;
+}
+
+.sort-control select {
+  min-width: 10rem;
+  padding: 0.55rem var(--spacing-sm);
+  border: 1px solid var(--input-border);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--background);
+  color: var(--foreground);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--font-sm);
+  outline: none;
+}
+
+.sort-control select:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 24%, transparent);
+}
+
 .container header .search-hint {
   font-size: var(--font-sm);
-  color: #000000;
+  color: var(--muted-foreground);
   margin: 0 0 var(--spacing-lg);
   letter-spacing: -0.01em;
 }
@@ -137,7 +271,7 @@ main {
 }
 
 .container header #btn-search:hover {
-  background: #667eea;
+  background: var(--ring);
   box-shadow: var(--shadow-sm);
 }
 
@@ -214,7 +348,7 @@ main {
 .profile-repositories h2 {
   font-size: var(--font-xl);
   font-weight: 700;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
   text-align: center;
 }
 
@@ -228,6 +362,7 @@ main {
 .repository-card {
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  background: var(--card);
   box-shadow: var(--shadow-sm);
   padding: 1.5rem 1rem;
   min-width: 250px;
@@ -263,7 +398,7 @@ main {
 .repository-stats span {
   font-size: var(--font-sm);
   color: var(--muted-foreground);
-  background: #ececec;
+  background: var(--stats-background);
   border-radius: 0.25rem;
   padding: 0.25rem 0.5rem;
   margin-bottom: 0.25rem;

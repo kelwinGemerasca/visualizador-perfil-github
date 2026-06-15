@@ -7,6 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizador de Perfil do GitHub</title>
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <script>
+        let savedTheme = null;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        try {
+            savedTheme = localStorage.getItem('theme');
+        } catch (error) {
+            savedTheme = null;
+        }
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.dataset.theme = 'dark';
+        }
+    </script>
 
     <link rel="stylesheet" href="src/css/reset.css">
     <link rel="stylesheet" href="src/css/styles.css">
@@ -17,6 +31,12 @@
 
 <body>
     <main>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Alternar entre tema claro e escuro" aria-pressed="false">
+            <span class="theme-toggle__label theme-toggle__label--light">Claro</span>
+            <span class="theme-toggle__icon" aria-hidden="true"></span>
+            <span class="theme-toggle__label theme-toggle__label--dark">Escuro</span>
+        </button>
+
         <i class="devicon-github-original"></i>
 
         <section class="container">

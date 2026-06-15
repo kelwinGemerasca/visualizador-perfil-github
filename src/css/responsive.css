@@ -23,8 +23,14 @@
   }
   
   .container header #input-search,
-  .container header #btn-search {
+  .container header #btn-search,
+  .sort-control select {
     max-width: 100%;
+  }
+
+  .sort-control {
+    max-width: 24rem;
+    flex-wrap: wrap;
   }
   
   .repositories ul { 
@@ -46,6 +52,10 @@
 
 /* Mobile grande */
 @media (max-width: 640px) {
+  .theme-toggle {
+    align-self: center;
+  }
+
   .devicon-github-original {
     font-size: var(--font-2xl);
   }
