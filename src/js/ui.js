@@ -1,35 +1,33 @@
 // Módulo responsável por manipulação de DOM e renderização
 
-(function () {
-    const profileResults = document.querySelector('.profile-results');
-    const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
+const profileResults = document.querySelector('.profile-results');
+const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+});
 
-    const showLoading = () => {
-        profileResults.innerHTML = `<p class="loading">Carregando...</p>`;
+export const showLoading = () => {
+    profileResults.innerHTML = `<p class="loading">Carregando...</p>`;
+};
+
+const formatCommitDate = (date) => {
+    if (!date) {
+        return 'Não informada';
+    }
+
+    return dateFormatter.format(new Date(date));
+};
+
+export const renderProfile = (userData, userRepos, sortType = 'lastCommit') => {
+    const sortOptions = {
+        lastCommit: 'Último commit',
+        stars: 'Estrelas',
+        forks: 'Forks',
+        watchers: 'Watchers'
     };
 
-    const formatCommitDate = (date) => {
-        if (!date) {
-            return 'Não informada';
-        }
-
-        return dateFormatter.format(new Date(date));
-    };
-
-
-    const renderProfile = (userData, userRepos, sortType = 'lastCommit') => {
-        const sortOptions = {
-            lastCommit: 'Último commit',
-            stars: 'Estrelas',
-            forks: 'Forks',
-            watchers: 'Watchers'
-        };
-
-        const repositoriesHTML = userRepos && userRepos.length > 0 ? userRepos.map(repo => `
+    const repositoriesHTML = userRepos && userRepos.length > 0 ? userRepos.map(repo => `
     <a href="${repo.html_url}" target="_blank">
         <div class="repository-card">
             <h3>${repo.name}</h3>
@@ -44,7 +42,7 @@
     </a>
         `).join('') : `<p>Nenhum repositório encontrado.</p>`;
 
-        profileResults.innerHTML = `
+    profileResults.innerHTML = `
         <div class="profile-card">
             <img src="${userData.avatar_url}" alt="Avatar de ${userData.name}" class="profile-avatar">
             <div class="profile-info">
@@ -80,21 +78,13 @@
         </div>
 
     `;
-    };
+};
 
-    const showError = (errorMessage) => {
-        alert(errorMessage);
-        profileResults.innerHTML = '';
-    };
+export const showError = (errorMessage) => {
+    alert(errorMessage);
+    profileResults.innerHTML = '';
+};
 
-    const clearResults = () => {
-        profileResults.innerHTML = '';
-    };
-
-    window.githubUi = {
-        clearResults,
-        renderProfile,
-        showError,
-        showLoading
-    };
-})();
+export const clearResults = () => {
+    profileResults.innerHTML = '';
+};

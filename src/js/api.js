@@ -1,56 +1,40 @@
 // Módulo responsável por comunicação com a API do GitHub
 
-(function () {
-    const BASE_URL = 'https://api.github.com';
+const BASE_URL = 'https://api.github.com';
 
-    // Retorna o usuário
-    const fetchUserProfile = async (username) => {
-        const response = await fetch(`${BASE_URL}/users/${username}`);
+const handleGithubError = async (response, fallbackMessage) => {
+    if (response.status === 403) {
+        const resetTimestamp = response.headers.get('x-ratelimit-reset');
+        const resetDate = resetTimestamp ? new Date(Number(resetTimestamp) * 1000) : null;
+        const resetMessage = resetDate ? ` Tente novamente após ${resetDate.toLocaleTimeString('pt-BR')}.` : '';
 
-        if (!response.ok) {
-            throw new Error('Usuário não encontrado');
-        }
+        throw new Error(`Limite de requisições da API do GitHub atingido.${resetMessage}`);
+    }
 
-        return await response.json();
-    };
+    throw new Error(fallbackMessage);
+};
 
-    // Retorna os repositórios do usuário
-    const fetchGithubUserRepos = async (userName) => {
-        const response = await fetch(`${BASE_URL}/users/${userName}/repos?per_page=10&sort=created`);
-        if (!response.ok) {
-            throw new Error('Repositórios não encontrados.');
-        }
-        const repositories = await response.json();
+// Retorna o usuário
+export const fetchUserProfile = async (username) => {
+    const response = await fetch(`${BASE_URL}/users/${username}`);
 
-        return await Promise.all(repositories.map(async (repo) => {
-            const lastCommitDate = await fetchLastCommitDate(userName, repo.name);
+    if (!response.ok) {
+        await handleGithubError(response, 'Usuário não encontrado');
+    }
 
-            return {
-                ...repo,
-                lastCommitDate
-            };
-        }));
-    };
+    return await response.json();
+};
 
-    const fetchLastCommitDate = async (userName, repoName) => {
-        try {
-            const encodedUserName = encodeURIComponent(userName);
-            const encodedRepoName = encodeURIComponent(repoName);
-            const response = await fetch(`${BASE_URL}/repos/${encodedUserName}/${encodedRepoName}/commits?per_page=1`);
+// Retorna os repositórios do usuário
+export const fetchGithubUserRepos = async (userName) => {
+    const response = await fetch(`${BASE_URL}/users/${userName}/repos?per_page=10&sort=created`);
+    if (!response.ok) {
+        await handleGithubError(response, 'Repositórios não encontrados.');
+    }
+    const repositories = await response.json();
 
-            if (!response.ok) {
-                return null;
-            }
-
-            const commits = await response.json();
-            return commits[0]?.commit?.committer?.date || commits[0]?.commit?.author?.date || null;
-        } catch (error) {
-            return null;
-        }
-    };
-
-    window.githubApi = {
-        fetchGithubUserRepos,
-        fetchUserProfile
-    };
-})();
+    return repositories.map((repo) => ({
+        ...repo,
+        lastCommitDate: repo.pushed_at
+    }));
+};
